@@ -1,5 +1,6 @@
 import './App.css';
 import { useState, useEffect } from 'react';
+import Details from './Details'
 
 function App() {
 
@@ -9,6 +10,7 @@ function App() {
   const [items,setItems] = useState([]);
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const criteria = 'top-headlines?country=se&category=entertainment';
@@ -34,7 +36,18 @@ function App() {
     )
   }, [])
 
-  if (error) {
+  function close() {
+    setSelectedItem(null);
+  }
+
+  if (selectedItem != null) {
+    return <Details
+      title={selectedItem.title}
+      image={selectedItem.urlToImage}
+      description={selectedItem.description}
+      close={close}
+    ></Details>;
+  } else if (error) {
     return <p>{error.message}</p>
   } else if (!isLoaded){
     return <p>Loading...</p>
@@ -42,7 +55,7 @@ function App() {
     return(
     <div>
       {items.map(item=> (
-        <div key={item.title}>
+        <div key={item.title} onClick={e => setSelectedItem(item)}>
           <h3>{item.title}</h3>
           <img src={item.urlToImage}/>
           <p>{item.description}</p>
